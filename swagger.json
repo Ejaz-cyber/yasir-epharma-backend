@@ -1,0 +1,1564 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "version": "1.0.1",
+    "title": "API documentation for project E-pharmacy Admin Dashboard.",
+    "description": "E-Pharmacy API BackEnd",
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "consumes": ["application/json", "multipart/form-data"],
+  "produces": ["application/json"],
+  "servers": [
+    { "url": "http://localhost:3000/" },
+    { "url": "https://backend-admin-ht2s.onrender.com" }
+  ],
+  "tags": [
+    {
+      "name": "User",
+      "description": "Authorization endpoints for user ( admin )"
+    },
+    {
+      "name": "Dashboard",
+      "description": "Endpoints for get information about last orders, income/expense and statistics"
+    },
+    {
+      "name": "Customers",
+      "description": "Endpoint for requesting information about all customers and search by query"
+    },
+    {
+      "name": "Orders",
+      "description": "Endpoint for get all orders list and search by query"
+    },
+    {
+      "name": "Products",
+      "description": "Endpoint for get all products list, add, delete, edit and search by query"
+    },
+    {
+      "name": "Suppliers",
+      "description": "Endpoint for get all suppliers list, add, edit and search by query"
+    }
+  ],
+  "paths": {
+    "/api/user/login": {
+      "post": {
+        "tags": ["User"],
+        "summary": "Login existing admin",
+        "parameters": [],
+        "requestBody": {
+          "description": "# Description of the request parameters:\n**email** - string, user email.\n **password** - string, encrypted user password.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Created session for existing admin",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "Bad request"
+                    }
+                  }
+                },
+                "example": {
+                  "message": "Bad request"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Email or password is wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "Email or password is wrong"
+                    }
+                  }
+                },
+                "example": {
+                  "message": "Email or password is wrong"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Email not verified",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "Email not verified"
+                    }
+                  }
+                },
+                "example": {
+                  "message": "Email not verified"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "Not found"
+                    }
+                  }
+                },
+                "example": {
+                  "message": "Not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "Server error",
+                      "example": "Email or password is wrong"
+                    }
+                  }
+                },
+                "example": {
+                  "message": "Email or password is wrong"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/logout": {
+      "get": {
+        "tags": ["User"],
+        "summary": "Log out admin",
+        "description": "Logout endpoint is a logout mechanism that terminates a admin's session and destroys the access token issued during pre-authentication. \n Description:  When a user clicks the logout button, it requests URL/user/logout with a valid token in the authorization header. The server checks the validity of the token, if the token is valid, the user's session is closed, the token is removed and the user is returned to the login page. If the token is invalid, the server returns a 401 status and informs the user that the token is invalid.",
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Logout success"
+          },
+          "204": {
+            "description": "Logout success"
+          },
+          "401": {
+            "description": "Not authorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "Description of the error."
+                    }
+                  }
+                },
+                "example": {
+                  "message": "Not authorized."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/user-info": {
+      "get": {
+        "tags": ["User"],
+        "summary": "Get admin info",
+        "description": "Get admin info endpoint is a mechanism that returns information about the admin. \n",
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Admin info",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "email": {
+                      "type": "string",
+                      "description": "Admin's email",
+                      "example": "test@gmail.com"
+                    },
+                    "name": {
+                      "type": "string",
+                      "description": "Admin's name",
+                      "example": "Test"
+                    },
+                    "_id": {
+                      "type": "string",
+                      "description": "Admin's id",
+                      "example": "5f9f4b3b7f1f3b0b3c7b1b3b"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "Description of the error."
+                    }
+                  }
+                },
+                "example": {
+                  "message": "Not authorized."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "Server error / Unathorized"
+                    }
+                  }
+                },
+                "example": {
+                  "message": "Unathorized"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/dashboard": {
+      "get": {
+        "tags": ["Dashboard"],
+        "summary": "Get dashboard info",
+        "description": "Get dashboard info endpoint is a mechanism that returns information about the last orders, income/expense and statistics. \n",
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Dashboard information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DashboardResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "Server error / Unathorized"
+                    }
+                  }
+                },
+                "example": {
+                  "message": "Unathorized"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/customers": {
+      "get": {
+        "tags": ["Customers"],
+        "summary": "Get all customers list",
+        "description": "Get all customers list endpoint is a mechanism that returns information about all customers. \n or filtered customers by query.",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "description": "Search by query (customer name)",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Customers list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomersResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "Server error / Unathorized"
+                    }
+                  }
+                },
+                "example": {
+                  "message": "Unathorized"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/orders": {
+      "get": {
+        "tags": ["Orders"],
+        "summary": "Get all orders list",
+        "description": "Get all orders list endpoint is a mechanism that returns information about all orders. \n or filtered orders by query.",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "description": "Search by query (order user name)",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Orders list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrdersResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "Server error / Unathorized"
+                    }
+                  }
+                },
+                "example": {
+                  "message": "Unathorized"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/products": {
+      "get": {
+        "tags": ["Products"],
+        "summary": "Get all products list",
+        "description": "Get all products list endpoint is a mechanism that returns information about all products. \n or filtered products by query.",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "description": "Search by query (product name)",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Products list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductsResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "Server error / Unathorized"
+                    }
+                  }
+                },
+                "example": {
+                  "message": "Unathorized"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Products"],
+        "summary": "Add new product",
+        "description": "Add new product endpoint is a mechanism that allows you to add a new product to the database. \n",
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "# Description of the request parameters:\n**name** - string, name of product.\n **price** - string, price of product. \n **stock** - string, quality of products in store. \n **category** - string, category of product. \n **suppliers** - supplier of product.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name", "price", "stock", "category", "suppliers"],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Product's name",
+                    "example": "Test"
+                  },
+                  "price": {
+                    "type": "string",
+                    "description": "Product's price",
+                    "example": "68.55"
+                  },
+                  "stock": {
+                    "type": "string",
+                    "description": "Product's stock",
+                    "example": "12"
+                  },
+                  "category": {
+                    "type": "string",
+                    "description": "Product's category",
+                    "example": "Medicines"
+                  },
+                  "suppliers": {
+                    "type": "string",
+                    "description": "Product's suppliers",
+                    "example": "Supplier1"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Product added",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddProductResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "Bad request"
+                    }
+                  }
+                },
+                "example": {
+                  "message": "Bad request"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "Server error / Unathorized"
+                    }
+                  }
+                },
+                "example": {
+                  "message": "Unathorized"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/products/{_id}": {
+      "put": {
+        "tags": ["Products"],
+        "summary": "Edit product",
+        "description": "Edit product endpoint is a mechanism that allows you to edit a product in the database. \n",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+            "name": "_id",
+            "in": "path",
+            "description": "Product's id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "For edit product you need to send request with product id in url and new product data in body. \n # Description of the request parameters:\n**name** - string, name of product.\n **price** - string, price of product. \n **stock** - string, quality of products in store. \n **category** - string, category of product. \n **suppliers** - supplier of product.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EditProductResponse"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Product edited",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EditProductResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "Bad request"
+                    }
+                  }
+                },
+                "example": {
+                  "message": "Bad request"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "Server error / Unathorized"
+                    }
+                  }
+                },
+                "example": {
+                  "message": "Unathorized"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Products"],
+        "summary": "Delete product",
+        "description": "Delete product endpoint is a mechanism that allows you to delete a product from the database. \n",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+            "name": "_id",
+            "in": "path",
+            "description": "Product's id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Product deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "Product deleted successfully"
+                    }
+                  }
+                },
+                "example": {
+                  "message": "Product deleted successfully"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "Bad request"
+                    }
+                  }
+                },
+                "example": {
+                  "message": "Bad request"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "Server error / Unathorized"
+                    }
+                  }
+                },
+                "example": {
+                  "message": "Unathorized"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/suppliers": {
+      "get": {
+        "tags": ["Suppliers"],
+        "summary": "Get all suppliers list",
+        "description": "Get all suppliers list endpoint is a mechanism that returns information about all suppliers. \n or filtered suppliers by query.",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "description": "Search by query (supplier name)",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Suppliers list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuppliersResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "Server error / Unathorized"
+                    }
+                  }
+                },
+                "example": {
+                  "message": "Unathorized"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Suppliers"],
+        "summary": "Add new supplier",
+        "description": "Add new supplier endpoint is a mechanism that allows you to add a new supplier to the database. \n",
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "# Description of the request parameters:\n**name** - string, name of supplier.\n **address** - string, address of supplier. \n **suppliers** - string, name of company of supplier. \n **date** - string, register date. \n **amount** - string, amount of money of all orders supplier. \n **status** - string, status of supplier. Can be Active or Deactive",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddSupplierRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Supplier added",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddSupplierResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "Server error / Unathorized"
+                    }
+                  }
+                },
+                "example": {
+                  "message": "Unathorized"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/suppliers/{_id}": {
+      "put": {
+        "tags": ["Suppliers"],
+        "summary": "Edit supplier",
+        "description": "Edit supplier endpoint is a mechanism that allows you to edit a supplier in the database. \n",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+            "name": "_id",
+            "in": "path",
+            "description": "Supplier's id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "For edit supplier you need to send request with supplier id in url and new supplier data in body. \n # Description of the request parameters:\n**name** - string, name of supplier.\n **address** - string, address of supplier. \n **suppliers** - string, name of company of supplier. \n **date** - string, register date. \n **amount** - string, amount of money of all orders supplier. \n **status** - string, status of supplier. Can be Active or Deactive",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EditSupplierRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Supplier edited",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EditSupplierResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "Bad request"
+                    }
+                  }
+                },
+                "example": {
+                  "message": "Bad request"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "Server error / Unathorized"
+                    }
+                  }
+                },
+                "example": {
+                  "message": "Unathorized"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "Bearer": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "securityDefinitions": {
+      "BearerAuth": {
+        "type": "apiKey",
+        "name": "Authorization",
+        "in": "header"
+      }
+    },
+    "schemas": {
+      "LoginRequest": {
+        "type": "object",
+        "required": ["email", "password"],
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "Admin's email",
+            "example": "frederiko@gmail.com"
+          },
+          "password": {
+            "type": "string",
+            "description": "Admin's password",
+            "example": "asdfg12345@"
+          }
+        }
+      },
+      "LoginResponse": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "Access token for admin",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJpYXQiOjE2MjQwNzQwNzMsImV4cCI6MTYyNDA3NzY3M30.7"
+          },
+          "email": {
+            "type": "string",
+            "description": "Admin's email",
+            "example": "frederiko@gmail.com"
+          },
+          "_id": {
+            "type": "string",
+            "description": "Admin's id",
+            "example": "669e89e547fdff8b634c8e1d"
+          },
+          "name": {
+            "type": "string",
+            "description": "Admin's name",
+            "example": "Frederiko"
+          }
+        }
+      },
+      "DashboardResponse": {
+        "type": "object",
+        "properties": {
+          "dashboard": [
+            {
+              "_id": {
+                "type": "string",
+                "description": "Order's id",
+                "example": "5f9f4b3b7f1f3b0b3c7b1b3b"
+              },
+              "name": {
+                "type": "string",
+                "description": "Order's name",
+                "example": "Test"
+              },
+              "amount": {
+                "type": "string",
+                "description": "Order's amount",
+                "example": "-32.99"
+              },
+              "type": {
+                "type": ["Income", "Expense", "Error"],
+                "description": "Order's type",
+                "example": "Income"
+              }
+            }
+          ],
+          "productsCount": {
+            "type": "number",
+            "description": "Count of all products",
+            "example": 10
+          },
+          "suppliersCount": {
+            "type": "number",
+            "description": "Count of all suppliers",
+            "example": 5
+          },
+          "customersCount": {
+            "type": "number",
+            "description": "Count of all customers",
+            "example": 15
+          },
+          "customers": [
+            {
+              "_id": {
+                "type": "string",
+                "description": "Customer's id",
+                "example": "5f9f4b3b7f1f3b0b3c7b1b3b"
+              },
+              "image": {
+                "type": "string",
+                "description": "Customer's image",
+                "example": "https://www.google.com/image.jpg"
+              },
+              "name": {
+                "type": "string",
+                "description": "Customer's name",
+                "example": "Test"
+              },
+              "email": {
+                "type": "string",
+                "description": "Customer's email",
+                "example": "test@gmail.com"
+              },
+              "spent": {
+                "type": "string",
+                "description": "Customer's spent",
+                "example": "3,500.65"
+              },
+              "phone": {
+                "type": "string",
+                "description": "Customer's phone",
+                "example": "+380123456789"
+              },
+              "address": {
+                "type": "string",
+                "description": "Customer's address",
+                "example": "Kyiv, Ukraine"
+              },
+              "register_date": {
+                "type": "string",
+                "description": "Customer's register date",
+                "example": "Mar 10, 2023"
+              }
+            }
+          ]
+        },
+        "example": {
+          "dashboard": [
+            {
+              "_id": "5f9f4b3b7f1f3b0b3c7b1b3b",
+              "name": "Test",
+              "amount": "-32.99",
+              "type": "Income"
+            }
+          ],
+          "productsCount": 10,
+          "suppliersCount": 5,
+          "customersCount": 15,
+          "customers": [
+            {
+              "_id": "5f9f4b3b7f1f3b0b3c7b1b3b",
+              "image": "https://www.google.com/image.jpg",
+              "name": "Test",
+              "email": "test@gmail.com",
+              "spent": "3,500.65",
+              "phone": "+380123456789",
+              "address": "Kyiv, Ukraine",
+              "register_date": "Mar 10, 2023"
+            }
+          ]
+        }
+      },
+      "CustomersResponse": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "Customer's id",
+            "example": "5f9f4b3b7f1f3b0b3c7b1b3b"
+          },
+          "image": {
+            "type": "string",
+            "description": "Customer's image",
+            "example": "https://www.google.com/image.jpg"
+          },
+          "name": {
+            "type": "string",
+            "description": "Customer's name",
+            "example": "Test"
+          },
+          "email": {
+            "type": "string",
+            "description": "Customer's email",
+            "example": "test@gmail.com"
+          },
+          "spent": {
+            "type": "string",
+            "description": "Customer's spent",
+            "example": "3,500.65"
+          },
+          "phone": {
+            "type": "string",
+            "description": "Customer's phone",
+            "example": "+380123456789"
+          },
+          "address": {
+            "type": "string",
+            "description": "Customer's address",
+            "example": "Kyiv, Ukraine"
+          },
+          "register_date": {
+            "type": "string",
+            "description": "Customer's register date",
+            "example": "Mar 10, 2023"
+          }
+        },
+        "example": [
+          {
+            "_id": "5f9f4b3b7f1f3b0b3c7b1b3b",
+            "image": "https://www.google.com/image.jpg",
+            "name": "Test",
+            "email": "test@gmail.com",
+            "spent": "3,500.65",
+            "phone": "+380123456789",
+            "address": "Kyiv, Ukraine",
+            "register_date": "Mar 10, 2023"
+          },
+          {
+            "_id": "5f9f4b3b7f1f3b0b3c8b1b4b",
+            "image": "https://www.google.com/image3.jpg",
+            "name": "Test3",
+            "email": "test3@gmail.com",
+            "spent": "3,570.65",
+            "phone": "+380123477789",
+            "address": "Kyiv, Ukraine",
+            "register_date": "Mar 17, 2024"
+          }
+        ]
+      },
+      "OrdersResponse": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "Order's id",
+            "example": "5f9f4b3b7f1f3b0b3c7b1b3b"
+          },
+          "photo": {
+            "type": "string",
+            "description": "Order's photo",
+            "example": "https://www.google.com/image.jpg"
+          },
+          "name": {
+            "type": "string",
+            "description": "Order's name",
+            "example": "Test"
+          },
+          "address": {
+            "type": "string",
+            "description": "Order's address",
+            "example": "Kyiv, Ukraine"
+          },
+          "products": {
+            "type": "string",
+            "description": "Quality of products in order",
+            "example": "12"
+          },
+          "price": {
+            "type": "string",
+            "description": "Order's price",
+            "example": "768.55"
+          },
+          "status": {
+            "type": "string",
+            "description": "Order's status",
+            "example": "Delivered"
+          },
+          "order_date": {
+            "type": "string",
+            "description": "Order's date",
+            "example": "Mar 10, 2023"
+          }
+        },
+        "example": [
+          {
+            "_id": "5f9f4b3b7f1f3b0b3c7b1b3b",
+            "photo": "https://www.google.com/image.jpg",
+            "name": "Test",
+            "address": "Kyiv, Ukraine",
+            "products": "12",
+            "price": "768.55",
+            "status": "Delivered",
+            "order_date": "Mar 10, 2023"
+          },
+          {
+            "_id": "5f9f4b3b7f1f3b0b3c7b1b8b",
+            "photo": "https://www.google.com/image1.jpg",
+            "name": "Test1",
+            "address": "Kyiv, Ukraine",
+            "products": "15",
+            "price": "700.55",
+            "status": "Pending",
+            "order_date": "Mar 10, 2024"
+          }
+        ]
+      },
+      "ProductsResponse": {
+        "type": "object",
+        "properties": {
+          "products": [
+            {
+              "_id": {
+                "type": "string",
+                "description": "Product's id",
+                "example": "5f9f4b3b7f1f3b0b3c7b1b3b"
+              },
+              "name": {
+                "type": "string",
+                "description": "Product's name",
+                "example": "Test"
+              },
+              "suppliers": {
+                "type": "string",
+                "description": "Product's suppliers",
+                "example": "Supplier1"
+              },
+              "stock": {
+                "type": "string",
+                "description": "Product's stock",
+                "example": "12"
+              },
+              "price": {
+                "type": "string",
+                "description": "Product's price",
+                "example": "68.55"
+              },
+              "category": {
+                "type": "string",
+                "description": "Product's category",
+                "example": "Medicines"
+              }
+            }
+          ],
+          "categories": [
+            {
+              "type": "string",
+              "description": "Category name",
+              "example": "Medicines"
+            }
+          ]
+        },
+        "example": {
+          "products": [
+            {
+              "_id": "5f9f4b3b7f1f3b0b3c7b1b3b",
+              "name": "Test",
+              "suppliers": "Supplier1",
+              "stock": "12",
+              "price": "68.55",
+              "category": "Medicines"
+            },
+            {
+              "_id": "5f9f4b3b7f1f3b0b3c7b1b8b",
+              "name": "Test1",
+              "suppliers": "Supplier2",
+              "stock": "15",
+              "price": "70.55",
+              "category": "Head"
+            }
+          ],
+          "categories": ["Medicines", "Head", "Heart", "Dental Care"]
+        }
+      },
+      "AddProductResponse": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "Product's id",
+            "example": "5f9f4b3b7f1f3b0b3c7b1b3b"
+          },
+          "name": {
+            "type": "string",
+            "description": "Product's name",
+            "example": "Test"
+          },
+          "price": {
+            "type": "string",
+            "description": "Product's price",
+            "example": "68.55"
+          },
+          "stock": {
+            "type": "string",
+            "description": "Product's stock",
+            "example": "12"
+          },
+          "category": {
+            "type": "string",
+            "description": "Product's category",
+            "example": "Medicines"
+          },
+          "suppliers": {
+            "type": "string",
+            "description": "Product's suppliers",
+            "example": "Supplier1"
+          }
+        }
+      },
+      "EditProductResponse": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Product's name",
+            "example": "New Test"
+          },
+          "price": {
+            "type": "string",
+            "description": "Product's price",
+            "example": "58.55"
+          },
+          "stock": {
+            "type": "string",
+            "description": "Product's stock",
+            "example": "42"
+          },
+          "category": {
+            "type": "string",
+            "description": "Product's category",
+            "example": "Heart"
+          },
+          "suppliers": {
+            "type": "string",
+            "description": "Product's suppliers",
+            "example": "VagaFarm"
+          }
+        }
+      },
+      "SuppliersResponse": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "Supplier's id",
+            "example": "5f9f4b3b7f1f3b0b3c7b1b3b"
+          },
+          "name": {
+            "type": "string",
+            "description": "Supplier's name",
+            "example": "Supplier1"
+          },
+          "address": {
+            "type": "string",
+            "description": "Supplier's address",
+            "example": "Odessa, Ukraine"
+          },
+          "suppliers": {
+            "type": "string",
+            "description": "Supplier's company",
+            "example": "VagaFarm"
+          },
+          "date": {
+            "type": "string",
+            "description": "Supplier's date",
+            "example": "Mar 10, 2023"
+          },
+          "amount": {
+            "type": "string",
+            "description": "Supplier's amount",
+            "example": "3500.65"
+          },
+          "status": {
+            "type": "string",
+            "description": "Supplier's status",
+            "example": "Active"
+          }
+        },
+        "example": [
+          {
+            "_id": "5f9f4b3b7f1f3b0b3c7b1b3b",
+            "name": "Supplier1",
+            "address": "Odessa, Ukraine",
+            "suppliers": "VagaFarm",
+            "date": "Mar 10, 2023",
+            "amount": "3500.65",
+            "status": "Active"
+          },
+          {
+            "_id": "5f9f4b3b7f1f3b0b3c7b1b8b",
+            "name": "Supplier2",
+            "address": "Kyiv, Ukraine",
+            "suppliers": "Square",
+            "date": "Mar 10, 2024",
+            "amount": "3700.65",
+            "status": "Deactive"
+          }
+        ]
+      },
+      "AddSupplierRequest": {
+        "type": "object",
+        "required": [
+          "name",
+          "address",
+          "suppliers",
+          "date",
+          "amount",
+          "status"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Supplier's name",
+            "example": "Supplier1"
+          },
+          "address": {
+            "type": "string",
+            "description": "Supplier's address",
+            "example": "Odessa, Ukraine"
+          },
+          "suppliers": {
+            "type": "string",
+            "description": "Supplier's company",
+            "example": "VagaFarm"
+          },
+          "date": {
+            "type": "string",
+            "description": "Supplier's date",
+            "example": "Mar 10, 2023"
+          },
+          "amount": {
+            "type": "string",
+            "description": "Supplier's amount",
+            "example": "3500.65"
+          },
+          "status": {
+            "type": "string",
+            "description": "Supplier's status",
+            "example": "Active"
+          }
+        }
+      },
+      "AddSupplierResponse": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "Supplier's id",
+            "example": "5f9f4b3b7f1f3b0b3c7b1b3b"
+          },
+          "name": {
+            "type": "string",
+            "description": "Supplier's name",
+            "example": "Supplier1"
+          },
+          "address": {
+            "type": "string",
+            "description": "Supplier's address",
+            "example": "Odessa, Ukraine"
+          },
+          "suppliers": {
+            "type": "string",
+            "description": "Supplier's company",
+            "example": "VagaFarm"
+          },
+          "date": {
+            "type": "string",
+            "description": "Supplier's date",
+            "example": "Mar 10, 2023"
+          },
+          "amount": {
+            "type": "string",
+            "description": "Supplier's amount",
+            "example": "3500.65"
+          },
+          "status": {
+            "type": "string",
+            "description": "Supplier's status",
+            "example": "Active"
+          }
+        }
+      },
+      "EditSupplierRequest": {
+        "type": "object",
+        "required": [
+          "name",
+          "address",
+          "suppliers",
+          "date",
+          "amount",
+          "status"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Supplier's name",
+            "example": "Supplier1"
+          },
+          "address": {
+            "type": "string",
+            "description": "Supplier's address",
+            "example": "Odessa, Ukraine"
+          },
+          "suppliers": {
+            "type": "string",
+            "description": "Supplier's company",
+            "example": "VagaFarm"
+          },
+          "date": {
+            "type": "string",
+            "description": "Supplier's date",
+            "example": "Mar 10, 2023"
+          },
+          "amount": {
+            "type": "string",
+            "description": "Supplier's amount",
+            "example": "3500.65"
+          },
+          "status": {
+            "type": "string",
+            "description": "Supplier's status",
+            "example": "Active"
+          }
+        }
+      },
+      "EditSupplierResponse": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "Supplier's id",
+            "example": "5f9f4b3b7f1f3b0b3c7b1b3b"
+          },
+          "name": {
+            "type": "string",
+            "description": "Supplier's name",
+            "example": "Supplier2"
+          },
+          "address": {
+            "type": "string",
+            "description": "Supplier's address",
+            "example": "Kyiv, Ukraine"
+          },
+          "suppliers": {
+            "type": "string",
+            "description": "Supplier's company",
+            "example": "Square"
+          },
+          "date": {
+            "type": "string",
+            "description": "Supplier's date",
+            "example": "Mar 10, 2024"
+          },
+          "amount": {
+            "type": "string",
+            "description": "Supplier's amount",
+            "example": "3700.65"
+          },
+          "status": {
+            "type": "string",
+            "description": "Supplier's status",
+            "example": "Deactive"
+          }
+        }
+      }
+    }
+  }
+}
