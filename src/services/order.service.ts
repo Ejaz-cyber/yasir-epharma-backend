@@ -42,11 +42,22 @@ export const fetchAllOrders = async (
       .limit(limit)
       .sort({ createdAt: -1 })
       .populate("userId", "name email phone profilePicture")
-      .populate("items.productId", "name price discount stock category")
+      .populate("items.productId", "name price discount stock category images")
       .lean();
 
+    const mappedOrders = orders.map((order: any) => {
+      if (order.items) {
+        order.items = order.items.map((item: any) => ({
+          ...item,
+          product: item.productId,
+          productId: item.productId?._id || item.productId,
+        }));
+      }
+      return order;
+    });
+
     return {
-      orders,
+      orders: mappedOrders,
       pagination: {
         totalItems: total,
         totalPages: Math.ceil(total / limit),
@@ -176,10 +187,18 @@ export const fetchAllOrders = async (
 };
 
 export const fetchOrderById = async (orderId: string) => {
-  const order = await Order.findById(orderId).populate(
-    "userId",
-    "name email phone profilePicture"
-  );
+  const order = await Order.findById(orderId)
+    .populate("userId", "name email phone profilePicture")
+    .populate("items.productId", "name price images category")
+    .lean();
+
+  if (order && order.items) {
+    order.items = order.items.map((item: any) => ({
+      ...item,
+      product: item.productId,
+      productId: item.productId?._id || item.productId,
+    }));
+  }
 
   return order;
 };
@@ -270,6 +289,7 @@ export const createOrderService = async (
 
   try {
     let subtotal = 0;
+    let prescriptionRequired = false;
     const orderItems: IOrderItem[] = [];
     const productInfos: IProductResponse[] = []; // store product info for response
 
@@ -282,6 +302,10 @@ export const createOrderService = async (
       const product = await Product.findById(item.productId).session(session);
       if (!product) {
         throw new ApiError(404, `Product not found`);
+      }
+
+      if (product.requiresPrescription) {
+        prescriptionRequired = true;
       }
 
       if (product.stock < item.quantity) {
@@ -309,6 +333,13 @@ export const createOrderService = async (
       });
     }
 
+    if (prescriptionRequired && !data.prescriptionImage) {
+      throw new ApiError(
+        400,
+        "Prescription is required for one or more items in your order"
+      );
+    }
+
     // 2️⃣ Calculate price breakdown
     const discount = 0; // e.g., coupon system can update later
     const tax = subtotal * 0.05; // 5% example tax
@@ -331,6 +362,7 @@ export const createOrderService = async (
       paymentMethod: paymentMethod || PaymentType.CASH_ON_DELIVERY,
       status: OrderStatus.PENDING,
       delivery,
+      prescriptionImage: data.prescriptionImage,
     });
 
     await order.save({ session });

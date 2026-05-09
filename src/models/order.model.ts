@@ -63,6 +63,7 @@ const orderSchema = new Schema<IOrder>(
     },
     cancel: { type: cancelOrderSchema, required: false },
     delivery: { type: deliverySchema, required: true },
+    prescriptionImage: { type: String, required: false },
   },
   { timestamps: true, versionKey: false }
 );

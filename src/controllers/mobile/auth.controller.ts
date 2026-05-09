@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { generateOtp, verifyOtp, refreshAccessToken } from "../../services/mobile/auth.service";
+import { generateOtp, verifyOtp, refreshAccessToken, logout } from "../../services/mobile/auth.service";
 import { ApiError } from "../../utils/ApiError";
 import { ApiResponse } from "../../utils/ApiResponse";
 
@@ -53,6 +53,16 @@ export const refreshAccessTokenController = async (req: Request, res: Response, 
     res
       .status(200)
       .json(new ApiResponse(200, { accessToken: newAccessToken }, "Access token refreshed"));
+  } catch (err: any) {
+    next(err);
+  }
+};
+
+export const logoutController = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { refreshToken } = req.body;
+    await logout(refreshToken);
+    res.status(200).json(new ApiResponse(200, null, "Logged out successfully"));
   } catch (err: any) {
     next(err);
   }

@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/server.js",
-    "start:dev": "nodemon src/server.ts"
+    "start:dev": "ts-node-dev --respawn --transpile-only ./src/server.js"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",

@@ -65,6 +65,11 @@ const productSchema = new Schema(
       type: Boolean,
       default: false,
     },
+
+    requiresPrescription: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
@@ -101,6 +106,7 @@ const addProductSchema = Joi.object({
     .required(),
   isFeatured: Joi.boolean().default(false),
   isActive: Joi.boolean().default(true),
+  requiresPrescription: Joi.boolean().default(false),
 });
 
 const editProductSchema = Joi.object({
@@ -119,6 +125,7 @@ const editProductSchema = Joi.object({
   isFeatured: Joi.boolean(),
   isActive: Joi.boolean(),
   outOfStock: Joi.boolean(),
+  requiresPrescription: Joi.boolean(),
 });
 
 const Product = model("Product", productSchema);

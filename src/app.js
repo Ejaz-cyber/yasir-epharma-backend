@@ -26,6 +26,45 @@ app.use(logger(formatsLogger));
 app.use(cors());
 app.use(express.json());
 
+// ─── Request / Response Logger ───────────────────────────────────────────────
+app.use((req, res, next) => {
+  const start = Date.now();
+  const timestamp = new Date().toISOString();
+
+  // Log incoming request
+  process.stdout.write("\n==========================================\n");
+  process.stdout.write(`>> REQUEST: ${req.method} ${req.originalUrl} [${timestamp}]\n`);
+
+  if (req.headers["authorization"]) {
+    const token = req.headers["authorization"];
+    process.stdout.write(`   Auth: ${token.substring(0, 40)}...\n`);
+  }
+
+  if (req.body && Object.keys(req.body).length > 0) {
+    const sanitized = { ...req.body };
+    // ["password", "confirmPassword", "otp", "token"].forEach((k) => {
+    //   if (sanitized[k]) sanitized[k] = "***";
+    // });
+    process.stdout.write(`   Body: ${JSON.stringify(sanitized, null, 2)}\n`);
+  }
+
+  // Intercept res.json to capture and log the response body
+  const originalJson = res.json.bind(res);
+  res.json = (body) => {
+    const ms = Date.now() - start;
+    process.stdout.write(`<< RESPONSE: ${req.method} ${req.originalUrl}\n`);
+    process.stdout.write(`   Status: ${res.statusCode} (${ms}ms)\n`);
+    if (body) {
+      process.stdout.write(`   Body: ${JSON.stringify(body, null, 2)}\n`);
+    }
+    process.stdout.write("==========================================\n\n");
+    return originalJson(body);
+  };
+
+  next();
+});
+// ─────────────────────────────────────────────────────────────────────────────
+
 // js code for admin web
 app.use("/api/admin/v1/user", userRouter);
 // app.use("/api/admin/v1/customers", customersRouter);

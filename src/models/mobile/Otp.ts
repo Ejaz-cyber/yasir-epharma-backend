@@ -9,7 +9,7 @@ export interface IOtp extends Document {
 
 const OtpSchema: Schema = new Schema<IOtp>({
   phone: { type: String, required: true },
-  otp: { type: String, required: true, unique: true },
+  otp: { type: String, required: true },
   createdAt: { type: Date, default: Date.now, expires: 300 }, // expires in 5 mins
   expired: { type: Boolean, default: false },
 });

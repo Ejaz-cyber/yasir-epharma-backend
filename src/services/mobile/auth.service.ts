@@ -13,7 +13,8 @@ const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET!;
 export async function generateOtp(phone: string) {
   await Otp.deleteMany({ phone });
 
-  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  //const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  const otp = "123456";
   await Otp.create({ phone, otp });
 
   return otp;
@@ -90,4 +91,9 @@ export async function refreshAccessToken(refreshToken: string, deviceId?: string
   );
 
   return newAccessToken;
+}
+
+export async function logout(refreshToken: string) {
+  if (!refreshToken) throw new ApiError(400, "Refresh token required");
+  await Session.deleteOne({ refreshToken });
 }

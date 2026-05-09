@@ -4,6 +4,7 @@ import {
   getOtp,
   refreshAccessTokenController,
   verifyOtpController,
+  logoutController,
 } from "../../controllers/mobile/auth.controller";
 
 const router = Router();
@@ -23,5 +24,6 @@ const router = Router();
 router.post("/get-otp", validatePhone, getOtp);
 router.post("/verify-otp", validatePhone, validateOtp, verifyOtpController);
 router.post("/refreshToken", refreshAccessTokenController);
+router.post("/logout", logoutController);
 
 export default router;

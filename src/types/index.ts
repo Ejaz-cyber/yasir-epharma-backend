@@ -74,6 +74,7 @@ export interface IOrder extends Document {
   createdAt: Date;
   updatedAt: Date;
   delivery: IDelivery;
+  prescriptionImage?: string;
 }
 
 export interface IDelivery {
@@ -133,6 +134,7 @@ export interface IProduct {
   isFeatured?: boolean;
   isActive?: boolean;
   outOfStock?: boolean;
+  requiresPrescription?: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }
