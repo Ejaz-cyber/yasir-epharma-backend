@@ -37,7 +37,7 @@ export const fetchAllOrders = async (
 
     const total = await Order.countDocuments(filter);
 
-    const orders = await Order.find(filter)
+    const orders: any[] = await Order.find(filter)
       .skip(skip)
       .limit(limit)
       .sort({ createdAt: -1 })
@@ -187,7 +187,7 @@ export const fetchAllOrders = async (
 };
 
 export const fetchOrderById = async (orderId: string) => {
-  const order = await Order.findById(orderId)
+  const order: any = await Order.findById(orderId)
     .populate("userId", "name email phone profilePicture")
     .populate("items.productId", "name price images category")
     .lean();

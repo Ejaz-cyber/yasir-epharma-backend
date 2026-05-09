@@ -246,7 +246,13 @@ Mobile endpoints use OTP-based authentication.
   "items": [
     { 
       "productId": "string", 
-      "quantity": number
+      "quantity": number,
+      "product": {
+        "name": "string",
+        "price": number,
+        "images": [{ "url": "string" }],
+        "category": "string"
+      }
     }
   ],
   "priceBreakdown": {
